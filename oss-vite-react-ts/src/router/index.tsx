@@ -4,6 +4,8 @@ import { useRoutes } from 'react-router-dom'
 import Storage from '@/utils/storage'
 
 import Login from '@/pages/login/Index'
+import ThreeCli from '@/pages/three/index'
+
 import { useSelector } from 'react-redux';
 import Container from '@/pages/public/Container';
 import loadable from '@loadable/component'
@@ -68,15 +70,19 @@ const Routes: React.FC = () => {
             element: <Login/>
         },
         {
-            path:'/',
-            element: state.asyncRoute.length ? <Container /> :<div>loading</div>,
-            children: [...defaultRoute, ...asyncRoutes]
+            path: '/three',
+            element: <ThreeCli/>
         },
-        {
-            path: '*',
-            element: <AuthComponent><NotFound /></AuthComponent>
+        // {
+        //     path:'/',
+        //     element: state.asyncRoute.length ? <Container /> :<div>loading</div>,
+        //     children: [...defaultRoute, ...asyncRoutes]
+        // },
+        // {
+        //     path: '*',
+        //     element: <AuthComponent><NotFound /></AuthComponent>
 
-        }
+        // }
     ])
     return routes
 }
