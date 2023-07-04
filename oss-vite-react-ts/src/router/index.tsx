@@ -55,7 +55,7 @@ const Routes: React.FC = () => {
     }, [state.asyncRoute])
     const {pathname} = useLocation()
     
-    console.log('pathname', pathname);
+    console.log('pathname', state.asyncRoute);
     
     if (state.asyncRoute.length <= 0 && window.location.hash !== '#/login') {
         console.log('asyncRoutes ------', state.asyncRoute, pathname, window.location.hash);
@@ -69,7 +69,7 @@ const Routes: React.FC = () => {
         },
         {
             path:'/',
-            element: <Container />,
+            element: state.asyncRoute.length ? <Container /> :<div>loading</div>,
             children: [...defaultRoute, ...asyncRoutes]
         },
         {
