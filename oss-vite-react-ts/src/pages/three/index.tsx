@@ -1,11 +1,14 @@
-import React, { useRef, useState ,useEffect} from 'react'
+import React, { useRef, useState ,useEffect, useImperativeHandle} from 'react'
 import { Canvas, useFrame , useLoader } from '@react-three/fiber'
 import { OrbitControls} from '@react-three/drei'
+import { A11y } from '@react-three/a11y'
 import * as THREE from 'three'
+import {useKeyPress} from 'ahooks'
+import Adventurer, { ModelRef } from './model/Adventurer'
 
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
-function Box(props) {
-  const meshRef = useRef(null)
+function Box(props: JSX.IntrinsicElements['mesh']) {
+  const meshRef = useRef<THREE.Mesh>(null)
   const [hovered, setHover] = useState(false)
   const [active, setActive] = useState(false)
   useFrame((state, delta) => (meshRef.current!.rotation.x += 0.01))
@@ -24,43 +27,34 @@ function Box(props) {
 }
 
 
-function Model() {
-  const modelRef = useRef();
-  const { scene,nodes, animations } = useLoader(GLTFLoader, '/src/assets/glb/Adventurer.glb')
-  const mixerRef = useRef();
-
-  useEffect(() => {
-    mixerRef.current = new THREE.AnimationMixer(modelRef.current!);
-    const animationAction = mixerRef.current!.clipAction(animations[15]); // 选择第一个动画
-    animationAction.play(); // 播放动画
-
-    return () => {
-      mixerRef.current?.stopAllAction(); // 在组件卸载时停止所有动画
-    };
-  }, [animations]);
-
-  useFrame((_, delta) => {
-    if (mixerRef.current) {
-      mixerRef.current.update(delta);
-    }
-  });
-
-
-  // You don't need to check for the presence of the result, when we're here
-  // the result is guaranteed to be present since useLoader suspends the component
-  return <primitive object={scene}  ref={modelRef} />
-}
-
+ 
 function ThreeCli(){
+    const adventurerRef = useRef<ModelRef>(null)
 
-    return (<div style={{width:'50vw', height:'50vh'}}>
+    const handelMovement = (id:number=0) =>{
+      if(adventurerRef.current){
+        adventurerRef.current.play(id)
+      }
+    }
+
+    return (<div style={{
+          width:'100vw',
+          height:'100vh',
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)'
+       }}>
       <Canvas>
         <ambientLight />
         <pointLight position={[10, 10, 10]} />
         {/* <Box position={[-1.2, 0, 0]} />
         <Box position={[1.2, 0, 0]} /> */}
-        <Model/>
+        <A11y role="button" actionCall={()=>handelMovement()} description="A" showAltText={false} >
+          <Adventurer forwardRef={adventurerRef}/>
+        </A11y>
         <OrbitControls/>
+        <axesHelper/>
       </Canvas>
       </div>
     )
